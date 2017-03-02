@@ -10,8 +10,10 @@ class SC {
     	Lexer lexer;
 		try {
 			lexer = new Lexer(new FileReader(args[0]));
+			//make tokens with lexer
 			try {
 				Parser parser = new Parser(lexer);
+				//parse tokens
 				Symbol result = parser.parse();
 				if(!parser.syntaxErrors){
 					System.out.println("parsing successful");

@@ -5,7 +5,7 @@ scan with {: return lexer.next_token(); :};
 
 parser code {:
 
-      public boolean syntaxErrors;  
+      public boolean syntaxErrors;
       public void syntax_error(Symbol current_token) {  
           report_error(
               "Syntax error at line " + (current_token.left+1) + ", column "
@@ -56,8 +56,9 @@ parser code {:
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
 terminal INTEGER, IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV;
-terminal LPAREN, RPAREN;
+terminal LPAREN, RPAREN, RBRA, LBRA;
 terminal BADCHAR;
+terminal MAIN;
 
 nonterminal statements, statement, top_level;
 nonterminal let_bind, full_exp, simple_exp, operator;

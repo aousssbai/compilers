@@ -12,6 +12,7 @@ import java_cup.runtime.*;
   public  boolean debug()            { return debug_mode; }
   public  void    debug(boolean mode){ debug_mode = mode; }
 
+//  Function print_lexeme
   private void print_lexeme(int type, Object value){
     if(!debug()){ return; }
 
@@ -39,6 +40,13 @@ import java_cup.runtime.*;
         System.out.printf("INT %d", value); break;
       case sym.IDENTIFIER:
         System.out.printf("IDENT %s", value); break;
+      case sym.MAIN:
+        System.out.print("main"); break;
+      case sym.LBRA:
+            System.out.print("{"); break;
+      case sym.RBRA:
+                  System.out.print("}"); break;
+
     }
     System.out.print(">  ");
   }
@@ -54,7 +62,9 @@ import java_cup.runtime.*;
 
 %}
 
-Whitespace = \r|\n|\r\n|" "|"\t"
+LineTerminator = \r|\n|\r\n
+Whitespace = {LineTerminator}|" "|"\t"
+InputCharacter = [^LineTerminator]
 
 Letter = [a-zA-Z]
 Digit = [0-9]
@@ -62,12 +72,23 @@ IdChar = {Letter} | {Digit} | "_"
 Identifier = {Letter}{IdChar}*
 Integer = (0|[1-9]{Digit}*)
 
+ /* comments */
+Comment = {TraditionalComment} | {EndOfLineComment}
+TraditionalComment   = "/#" [^#] ~"#/" | "/#" "#"+ "/"
+EndOfLineComment     = "#" {InputCharacter}* {LineTerminator}?
+
+/* character */
+character = "'" {InputCharacter} "'"
+
 %%
+
 <YYINITIAL> {
 
+//Keywords
+  "main"        { return symbol(sym.MAIN); }
   "let"         { return symbol(sym.LET);        }
-  {Integer}     { return symbol(sym.INTEGER,
-                                Integer.parseInt(yytext())); }
+
+  {Integer}     { return symbol(sym.INTEGER,Integer.parseInt(yytext())); }
   {Identifier}  { return symbol(sym.IDENTIFIER, yytext());   }
 
   {Whitespace}  { /* do nothing */               }
@@ -79,7 +100,8 @@ Integer = (0|[1-9]{Digit}*)
   "/"           { return symbol(sym.DIV);        }
   "("           { return symbol(sym.LPAREN);     }
   ")"           { return symbol(sym.RPAREN);     }
-
+  "{"           { return symbol(sym.LBRA);       }
+  "}"           { return symbol(sym.RBRA);       }
 }
 
 [^]  {
