@@ -1,3 +1,0 @@
-Paragraph: 20
-Problem: it is not clear whether we have to have a space between the terminal "main" and the opening curly bracket
-Our solution: for more flexibility our parser allows to have 0 to infinite spaces between the terminal "main" and the opening curly bracket

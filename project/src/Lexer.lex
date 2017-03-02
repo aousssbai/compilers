@@ -8,6 +8,8 @@ import java_cup.runtime.*;
 %column
 
 %{
+  StringBuffer string = new StringBuffer();
+
   private boolean debug_mode;
   public  boolean debug()            { return debug_mode; }
   public  void    debug(boolean mode){ debug_mode = mode; }
@@ -45,7 +47,12 @@ import java_cup.runtime.*;
       case sym.LBRA:
             System.out.print("{"); break;
       case sym.RBRA:
-                  System.out.print("}"); break;
+            System.out.print("}"); break;
+      case sym.PRINT:
+            System.out.print("print"); break;
+      case sym.STRING_LITERAL:
+            System.out.printf("STRING_LITERAL %s", value); break;
+
 
     }
     System.out.print(">  ");
@@ -80,6 +87,10 @@ EndOfLineComment     = "#" {InputCharacter}* {LineTerminator}?
 /* character */
 character = "'" {InputCharacter} "'"
 
+
+
+%state STRING
+
 %%
 
 <YYINITIAL> {
@@ -87,6 +98,7 @@ character = "'" {InputCharacter} "'"
 //Keywords
   "main"        { return symbol(sym.MAIN); }
   "let"         { return symbol(sym.LET);        }
+  "print"       { return symbol(sym.PRINT);     }
 
   {Integer}     { return symbol(sym.INTEGER,Integer.parseInt(yytext())); }
   {Identifier}  { return symbol(sym.IDENTIFIER, yytext());   }
@@ -102,6 +114,19 @@ character = "'" {InputCharacter} "'"
   ")"           { return symbol(sym.RPAREN);     }
   "{"           { return symbol(sym.LBRA);       }
   "}"           { return symbol(sym.RBRA);       }
+}
+
+<STRING> {
+  \"                             { yybegin(YYINITIAL);
+                                   return symbol(sym.STRING_LITERAL,
+                                   string.toString()); }
+  [^\n\r\"\\]+                   { string.append( yytext() ); }
+  \\t                            { string.append('\t'); }
+  \\n                            { string.append('\n'); }
+
+  \\r                            { string.append('\r'); }
+  \\\"                           { string.append('\"'); }
+  \\                             { string.append('\\'); }
 }
 
 [^]  {

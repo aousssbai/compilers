@@ -58,13 +58,26 @@ parser code {:
 terminal INTEGER, IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV;
 terminal LPAREN, RPAREN, RBRA, LBRA;
 terminal BADCHAR;
+
 terminal MAIN;
+
+terminal STRING_LITERAL;
+
+terminal PRINT;
 
 nonterminal statements, statement, top_level;
 nonterminal let_bind, full_exp, simple_exp, operator;
 
+nonterminal main_function;
+
+//testing
+//nonterminal test;
+
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
+
+
+main_function ::= MAIN LBRA statements RBRA SEMICOL;
 
 top_level ::= statements:ss {:
                 if(debug()) System.out.println((Node)ss);
@@ -93,6 +106,7 @@ full_exp ::= simple_exp:e SEMICOL {: RESULT = (Node)e; :};
 
 simple_exp ::= INTEGER:i    {: RESULT = new Node(i); :}
              | IDENTIFIER:i {: RESULT = new Node(i); :}
+             | STRING_LITERAL:i {: RESULT = new Node(i); :}
              | simple_exp:e1 operator:o simple_exp:e2 {:
                   Node n = (Node)o;
                   n.addChild((Node)e1);
