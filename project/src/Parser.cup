@@ -61,7 +61,8 @@ terminal BADCHAR;
 
 terminal MAIN;
 
-terminal STRING_LITERAL;
+//Types
+terminal TYPE_BOOL,CHAR;
 
 terminal PRINT;
 
@@ -70,12 +71,17 @@ nonterminal let_bind, full_exp, simple_exp, operator;
 
 nonterminal main_function;
 
+// TODO:Delete test
+nonterminal test;
+
 //testing
 //nonterminal test;
 
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
 
+// TODO:Delete test
+test ::= simple_exp SEMICOL;
 
 main_function ::= MAIN LBRA statements RBRA SEMICOL;
 
@@ -106,7 +112,7 @@ full_exp ::= simple_exp:e SEMICOL {: RESULT = (Node)e; :};
 
 simple_exp ::= INTEGER:i    {: RESULT = new Node(i); :}
              | IDENTIFIER:i {: RESULT = new Node(i); :}
-             | STRING_LITERAL:i {: RESULT = new Node(i); :}
+             | CHAR:i {: RESULT = new Node(i); :}
              | simple_exp:e1 operator:o simple_exp:e2 {:
                   Node n = (Node)o;
                   n.addChild((Node)e1);
@@ -134,3 +140,5 @@ let_bind ::= LET IDENTIFIER:i EQUAL full_exp:e {:
                n.addChild((Node)e);
                RESULT = n;
              :};
+
+

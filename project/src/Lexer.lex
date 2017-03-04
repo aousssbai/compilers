@@ -50,8 +50,8 @@ import java_cup.runtime.*;
             System.out.print("}"); break;
       case sym.PRINT:
             System.out.print("print"); break;
-      case sym.STRING_LITERAL:
-            System.out.printf("STRING_LITERAL %s", value); break;
+      case sym.CHAR:
+            System.out.printf("CHAR %c", value); break;
 
 
     }
@@ -84,12 +84,12 @@ Comment = {TraditionalComment} | {EndOfLineComment}
 TraditionalComment   = "/#" [^#] ~"#/" | "/#" "#"+ "/"
 EndOfLineComment     = "#" {InputCharacter}* {LineTerminator}?
 
-/* character */
-character = "'" {InputCharacter} "'"
+/* character TODO: is \n a char?  */
+character = [:jletterdigit:] | \p{Punctuation}| " "
+char = "'" {character} "'"
 
 
-
-%state STRING
+//%state CHAR
 
 %%
 
@@ -100,6 +100,10 @@ character = "'" {InputCharacter} "'"
   "let"         { return symbol(sym.LET);        }
   "print"       { return symbol(sym.PRINT);     }
 
+// Types
+  "bool"        { return symbol(sym.TYPE_BOOL);}
+
+// Other
   {Integer}     { return symbol(sym.INTEGER,Integer.parseInt(yytext())); }
   {Identifier}  { return symbol(sym.IDENTIFIER, yytext());   }
 
@@ -114,20 +118,17 @@ character = "'" {InputCharacter} "'"
   ")"           { return symbol(sym.RPAREN);     }
   "{"           { return symbol(sym.LBRA);       }
   "}"           { return symbol(sym.RBRA);       }
+  {char}        { return symbol(sym.CHAR);       }
+//  \'            { string.setLength(0); yybegin(CHAR); }
 }
 
-<STRING> {
-  \"                             { yybegin(YYINITIAL);
-                                   return symbol(sym.STRING_LITERAL,
-                                   string.toString()); }
-  [^\n\r\"\\]+                   { string.append( yytext() ); }
-  \\t                            { string.append('\t'); }
-  \\n                            { string.append('\n'); }
-
-  \\r                            { string.append('\r'); }
-  \\\"                           { string.append('\"'); }
-  \\                             { string.append('\\'); }
-}
+//<CHAR> {
+//  \'                             { yybegin(YYINITIAL);
+//                                   return symbol(sym.CHAR,
+//                                   string.toString()); }
+//  {character}                    { string.append( yytext() ); }
+//  [^]                            { throw new Error("Character must be closed with a '. Cant be void:" + yytext()); }
+//}
 
 [^]  {
   System.out.println("file:" + (yyline+1) +

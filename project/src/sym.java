@@ -10,21 +10,22 @@ public class sym {
   public static final int BADCHAR = 15;
   public static final int RPAREN = 12;
   public static final int EQUAL = 5;
+  public static final int CHAR = 18;
   public static final int RBRA = 13;
   public static final int IDENTIFIER = 3;
   public static final int LBRA = 14;
   public static final int LPAREN = 11;
-  public static final int STRING_LITERAL = 17;
   public static final int EOF = 0;
   public static final int MULT = 9;
   public static final int MAIN = 16;
   public static final int DIV = 10;
   public static final int SEMICOL = 6;
   public static final int MINUS = 8;
-  public static final int PRINT = 18;
+  public static final int PRINT = 19;
   public static final int error = 1;
   public static final int LET = 4;
   public static final int INTEGER = 2;
+  public static final int TYPE_BOOL = 17;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -43,7 +44,8 @@ public class sym {
   "LBRA",
   "BADCHAR",
   "MAIN",
-  "STRING_LITERAL",
+  "TYPE_BOOL",
+  "CHAR",
   "PRINT"
   };
 }
