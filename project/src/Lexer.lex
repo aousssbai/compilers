@@ -109,6 +109,7 @@ char = "'" {character} "'"
   "char"        { return symbol(sym.TYPE_CHAR);}
   "rat"         { return symbol(sym.TYPE_RAT);}
   "float"       { return symbol(sym.TYPE_FLOAT);}
+  "dict"        { return symbol(sym.TYPE_DICT);}
 
 
 
@@ -127,7 +128,9 @@ char = "'" {character} "'"
   ")"           { return symbol(sym.RPAREN);     }
   "{"           { return symbol(sym.LBRA);       }
   "}"           { return symbol(sym.RBRA);       }
-  "_"           { return symbol(sym.UNDERSCORE);       }
+  "_"           { return symbol(sym.UNDERSCORE); }
+  "."           { return symbol(sym.DOT);        }
+
 
   {char}        { return symbol(sym.CHAR);       }
 //  \'            { string.setLength(0); yybegin(CHAR); }

@@ -55,7 +55,7 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, UNDERSCORE;
+terminal IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, UNDERSCORE, DOT;
 terminal LPAREN, RPAREN, RBRA, LBRA;
 terminal BADCHAR;
 
@@ -63,13 +63,13 @@ terminal BADCHAR;
 terminal MAIN, PRINT;
 
 //Types Def
-terminal TYPE_BOOL,TYPE_CHAR,TYPE_INT, TYPE_FLOAT,TYPE_RAT;
+terminal TYPE_BOOL,TYPE_CHAR,TYPE_INT, TYPE_FLOAT,TYPE_RAT, TYPE_DICT;
 
 //Types value
 terminal TRUE, FALSE, CHAR, INTEGER;
 
 //Value of types
-nonterminal int_val, rat_val;
+nonterminal int_val, rat_val, float_val;
 
 // Non terminal blocks
 nonterminal statements, statement, top_level;
@@ -92,7 +92,8 @@ test ::= TRUE
         | FALSE
         | CHAR
         | rat_val
-        | int_val;
+        | int_val
+        | float_val;
 //        | simple_exp SEMICOL
 
 
@@ -160,6 +161,8 @@ int_val ::= number
         | MINUS number;
 
 rat_val ::= int_val DIV number;
+
+float_val ::= int_val DOT number;
 
 
 
