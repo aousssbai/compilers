@@ -95,6 +95,9 @@ char = "'" {character} "'"
 
 <YYINITIAL> {
 
+ "T"           { return symbol(sym.TRUE);      }
+ "F"           { return symbol(sym.FALSE);      }
+
 //Keywords
   "main"        { return symbol(sym.MAIN); }
   "let"         { return symbol(sym.LET);        }
@@ -102,10 +105,16 @@ char = "'" {character} "'"
 
 // Types
   "bool"        { return symbol(sym.TYPE_BOOL);}
+  "int"         { return symbol(sym.TYPE_INT);}
+  "char"        { return symbol(sym.TYPE_CHAR);}
+  "rat"         { return symbol(sym.TYPE_RAT);}
+  "float"       { return symbol(sym.TYPE_FLOAT);}
+
+
 
 // Other
-  {Integer}     { return symbol(sym.INTEGER,Integer.parseInt(yytext())); }
   {Identifier}  { return symbol(sym.IDENTIFIER, yytext());   }
+  {Integer}     { return symbol(sym.INTEGER,Integer.parseInt(yytext())); }
 
   {Whitespace}  { /* do nothing */               }
   ":="          { return symbol(sym.EQUAL);      }
@@ -118,6 +127,7 @@ char = "'" {character} "'"
   ")"           { return symbol(sym.RPAREN);     }
   "{"           { return symbol(sym.LBRA);       }
   "}"           { return symbol(sym.RBRA);       }
+
   {char}        { return symbol(sym.CHAR);       }
 //  \'            { string.setLength(0); yybegin(CHAR); }
 }

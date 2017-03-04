@@ -55,17 +55,20 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal INTEGER, IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV;
+terminal IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV;
 terminal LPAREN, RPAREN, RBRA, LBRA;
 terminal BADCHAR;
 
-terminal MAIN;
+// Keywords
+terminal MAIN, PRINT;
 
-//Types
-terminal TYPE_BOOL,CHAR;
+//Types Def
+terminal TYPE_BOOL,TYPE_CHAR,TYPE_INT, TYPE_FLOAT,TYPE_RAT;
 
-terminal PRINT;
+//Types value
+terminal TRUE, FALSE, CHAR, INTEGER;
 
+// Non terminal/
 nonterminal statements, statement, top_level;
 nonterminal let_bind, full_exp, simple_exp, operator;
 
@@ -81,7 +84,9 @@ precedence left PLUS, MINUS;
 precedence left DIV, MULT;
 
 // TODO:Delete test
-test ::= simple_exp SEMICOL;
+test ::= simple_exp SEMICOL
+        | TRUE
+        | FALSE;
 
 main_function ::= MAIN LBRA statements RBRA SEMICOL;
 
