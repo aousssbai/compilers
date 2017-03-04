@@ -68,17 +68,18 @@ terminal TYPE_BOOL,TYPE_CHAR,TYPE_INT, TYPE_FLOAT,TYPE_RAT;
 //Types value
 terminal TRUE, FALSE, CHAR, INTEGER;
 
-// Non terminal/
+// Non terminal blocks
 nonterminal statements, statement, top_level;
 nonterminal let_bind, full_exp, simple_exp, operator;
 
 nonterminal main_function;
 
+nonterminal int_val;
+
 // TODO:Delete test
 nonterminal test;
 
-//testing
-//nonterminal test;
+
 
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
@@ -86,7 +87,8 @@ precedence left DIV, MULT;
 // TODO:Delete test
 test ::= simple_exp SEMICOL
         | TRUE
-        | FALSE;
+        | FALSE
+        | int_val;
 
 main_function ::= MAIN LBRA statements RBRA SEMICOL;
 
@@ -145,5 +147,11 @@ let_bind ::= LET IDENTIFIER:i EQUAL full_exp:e {:
                n.addChild((Node)e);
                RESULT = n;
              :};
+
+// Numbers values def
+int_val ::= INTEGER
+        | MINUS INTEGER;
+
+
 
 
