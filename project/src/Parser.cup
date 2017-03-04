@@ -75,7 +75,6 @@ nonterminal int_val, rat_val;
 nonterminal statements, statement, top_level;
 nonterminal let_bind, full_exp, simple_exp, operator;
 
-nonterminal main_function;
 
 //Numerical helpers
 nonterminal number;
@@ -89,13 +88,13 @@ precedence left PLUS, MINUS;
 precedence left DIV, MULT;
 
 // TODO:Delete test
-test ::= simple_exp SEMICOL
-        | TRUE
+test ::= TRUE
         | FALSE
-        | int_val
-        | rat_val;
+        | CHAR
+        | rat_val
+        | int_val;
+//        | simple_exp SEMICOL
 
-main_function ::= MAIN LBRA statements RBRA SEMICOL;
 
 top_level ::= statements:ss {:
                 if(debug()) System.out.println((Node)ss);
@@ -124,7 +123,7 @@ full_exp ::= simple_exp:e SEMICOL {: RESULT = (Node)e; :};
 
 simple_exp ::= INTEGER:i    {: RESULT = new Node(i); :}
              | IDENTIFIER:i {: RESULT = new Node(i); :}
-             | CHAR:i {: RESULT = new Node(i); :}
+//             | CHAR:i {: RESULT = new Node(i); :}
              | simple_exp:e1 operator:o simple_exp:e2 {:
                   Node n = (Node)o;
                   n.addChild((Node)e1);
@@ -155,7 +154,7 @@ let_bind ::= LET IDENTIFIER:i EQUAL full_exp:e {:
 
 // Numbers values def
 number ::= INTEGER
-        | INTEGER UNDERSCORE INTEGER;
+        | number UNDERSCORE INTEGER;
 
 int_val ::= number
         | MINUS number;
