@@ -127,6 +127,7 @@ char = "'" {character} "'"
   ")"           { return symbol(sym.RPAREN);     }
   "{"           { return symbol(sym.LBRA);       }
   "}"           { return symbol(sym.RBRA);       }
+  "_"           { return symbol(sym.UNDERSCORE);       }
 
   {char}        { return symbol(sym.CHAR);       }
 //  \'            { string.setLength(0); yybegin(CHAR); }

@@ -55,7 +55,7 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV;
+terminal IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, UNDERSCORE;
 terminal LPAREN, RPAREN, RBRA, LBRA;
 terminal BADCHAR;
 
@@ -68,13 +68,17 @@ terminal TYPE_BOOL,TYPE_CHAR,TYPE_INT, TYPE_FLOAT,TYPE_RAT;
 //Types value
 terminal TRUE, FALSE, CHAR, INTEGER;
 
+//Value of types
+nonterminal int_val, rat_val;
+
 // Non terminal blocks
 nonterminal statements, statement, top_level;
 nonterminal let_bind, full_exp, simple_exp, operator;
 
 nonterminal main_function;
 
-nonterminal int_val;
+//Numerical helpers
+nonterminal number;
 
 // TODO:Delete test
 nonterminal test;
@@ -88,7 +92,8 @@ precedence left DIV, MULT;
 test ::= simple_exp SEMICOL
         | TRUE
         | FALSE
-        | int_val;
+        | int_val
+        | rat_val;
 
 main_function ::= MAIN LBRA statements RBRA SEMICOL;
 
@@ -149,8 +154,13 @@ let_bind ::= LET IDENTIFIER:i EQUAL full_exp:e {:
              :};
 
 // Numbers values def
-int_val ::= INTEGER
-        | MINUS INTEGER;
+number ::= INTEGER
+        | INTEGER UNDERSCORE INTEGER;
+
+int_val ::= number
+        | MINUS number;
+
+rat_val ::= int_val DIV number;
 
 
 

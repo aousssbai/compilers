@@ -1,0 +1,7 @@
+Paragraph: 7
+Problem: it is not clear whether we can have an underscore (for readability?) only in rat or also in float and int.
+Our solution: In many other languages, underscore is supported in all numerical types (like Java), so our compiler accepts this syntax.
+
+Paragraph: 7
+Problem: it is not clear whether we can have a negative denominator in rational.
+Our solution: We prefer to avoid having this situation: "-455/-52", so our compiler doesn't accept this syntax. Only numerators can be negative.
