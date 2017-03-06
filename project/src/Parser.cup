@@ -55,21 +55,23 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, UNDERSCORE, DOT;
+terminal IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, UNDERSCORE, DOT, LCROCHET, RCROCHET, COMMA, COLON, LAGRA, RAGRA;
 terminal LPAREN, RPAREN, RBRA, LBRA;
 terminal BADCHAR;
 
 // Keywords
-terminal MAIN, PRINT;
+terminal MAIN, PRINT, DICT,SEQ, TOP, LEN;
 
 //Types Def
-terminal TYPE_BOOL,TYPE_CHAR,TYPE_INT, TYPE_FLOAT,TYPE_RAT, TYPE_DICT;
+terminal TYPE_BOOL,TYPE_CHAR,TYPE_INT, TYPE_FLOAT,TYPE_RAT;
+nonterminal type_dict, type_seq;
 
 //Types value
-terminal TRUE, FALSE, CHAR, INTEGER;
+terminal TRUE, FALSE, CHAR, INTEGER, STRING;
+nonterminal int_val, rat_val, float_val, dict_val, seq_val;
 
-//Value of types
-nonterminal int_val, rat_val, float_val;
+//Dict/SEQ components
+nonterminal dict_obj,dict_content,seq_content, len_property;
 
 // Non terminal blocks
 nonterminal statements, statement, top_level;
@@ -77,7 +79,7 @@ nonterminal let_bind, full_exp, simple_exp, operator;
 
 
 //Numerical helpers
-nonterminal number;
+nonterminal number, all_types, all_types_val;
 
 // TODO:Delete test
 nonterminal test;
@@ -88,12 +90,7 @@ precedence left PLUS, MINUS;
 precedence left DIV, MULT;
 
 // TODO:Delete test
-test ::= TRUE
-        | FALSE
-        | CHAR
-        | rat_val
-        | int_val
-        | float_val;
+test ::= all_types_val;
 //        | simple_exp SEMICOL
 
 
@@ -164,6 +161,57 @@ rat_val ::= int_val DIV number;
 
 float_val ::= int_val DOT number;
 
+// Types
+// TODO: to complete with string, dict...
+all_types ::= TYPE_BOOL
+            | TYPE_CHAR
+            | TYPE_INT
+            | TYPE_FLOAT
+            | TYPE_RAT
+            | type_seq
+            | type_dict;
 
+// Types val
+all_types_val ::= TRUE
+                | FALSE
+                | CHAR
+                | int_val
+                | rat_val
+                | float_val
+                | dict_val
+                | seq_val
+                | STRING
+                | IDENTIFIER
+                | len_property;
 
+// Dict
+type_dict ::= DICT LCROCHET all_types COMMA all_types RCROCHET
+            | DICT LCROCHET TOP COMMA all_types RCROCHET
+            | DICT LCROCHET all_types COMMA TOP RCROCHET
+            | DICT LCROCHET TOP COMMA TOP RCROCHET;
 
+dict_val ::= LBRA dict_content RBRA;
+
+dict_content ::= dict_obj
+              | dict_obj COMMA dict_content
+              | /* empty */ ;
+
+dict_obj ::= all_types_val COLON all_types_val;
+
+// Seq
+
+type_seq ::= SEQ LCROCHET all_types RCROCHET
+           | SEQ LCROCHET TOP RCROCHET;
+
+seq_val ::= LAGRA seq_content RAGRA;
+
+seq_content ::=  all_types_val
+            | all_types_val COMMA seq_content
+            | /* empty */  ;
+
+//len
+
+len_property ::= IDENTIFIER DOT LEN;
+
+// TODO: add len as int for operations
+// TODO: add a[index] for dictionnary and sequence

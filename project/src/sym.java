@@ -6,34 +6,45 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int UNDERSCORE = 10;
-  public static final int PLUS = 6;
-  public static final int BADCHAR = 16;
-  public static final int RPAREN = 13;
-  public static final int EQUAL = 4;
-  public static final int CHAR = 26;
-  public static final int TYPE_INT = 21;
-  public static final int RBRA = 14;
-  public static final int TYPE_CHAR = 20;
-  public static final int IDENTIFIER = 2;
-  public static final int TRUE = 24;
-  public static final int LBRA = 15;
-  public static final int LPAREN = 12;
-  public static final int EOF = 0;
+  public static final int SEQ = 26;
+  public static final int RCROCHET = 13;
   public static final int MULT = 8;
-  public static final int MAIN = 17;
-  public static final int DIV = 9;
-  public static final int SEMICOL = 5;
-  public static final int FALSE = 25;
+  public static final int CHAR = 36;
+  public static final int LBRA = 21;
+  public static final int INTEGER = 37;
+  public static final int LPAREN = 18;
+  public static final int BADCHAR = 22;
+  public static final int LAGRA = 16;
   public static final int MINUS = 7;
-  public static final int PRINT = 18;
-  public static final int error = 1;
+  public static final int RPAREN = 19;
+  public static final int COMMA = 14;
+  public static final int SEMICOL = 5;
+  public static final int DIV = 9;
+  public static final int TYPE_INT = 31;
+  public static final int PLUS = 6;
+  public static final int MAIN = 23;
   public static final int DOT = 11;
+  public static final int EOF = 0;
+  public static final int EQUAL = 4;
+  public static final int TRUE = 34;
+  public static final int error = 1;
+  public static final int LCROCHET = 12;
+  public static final int RBRA = 20;
+  public static final int RAGRA = 17;
+  public static final int TYPE_RAT = 33;
+  public static final int TYPE_FLOAT = 32;
+  public static final int TOP = 27;
+  public static final int TYPE_CHAR = 30;
+  public static final int COLON = 15;
+  public static final int DICT = 25;
   public static final int LET = 3;
-  public static final int TYPE_RAT = 23;
-  public static final int TYPE_FLOAT = 22;
-  public static final int INTEGER = 27;
-  public static final int TYPE_BOOL = 19;
+  public static final int UNDERSCORE = 10;
+  public static final int STRING = 38;
+  public static final int LEN = 28;
+  public static final int FALSE = 35;
+  public static final int TYPE_BOOL = 29;
+  public static final int PRINT = 24;
+  public static final int IDENTIFIER = 2;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -47,6 +58,12 @@ public class sym {
   "DIV",
   "UNDERSCORE",
   "DOT",
+  "LCROCHET",
+  "RCROCHET",
+  "COMMA",
+  "COLON",
+  "LAGRA",
+  "RAGRA",
   "LPAREN",
   "RPAREN",
   "RBRA",
@@ -54,6 +71,10 @@ public class sym {
   "BADCHAR",
   "MAIN",
   "PRINT",
+  "DICT",
+  "SEQ",
+  "TOP",
+  "LEN",
   "TYPE_BOOL",
   "TYPE_CHAR",
   "TYPE_INT",
@@ -62,7 +83,8 @@ public class sym {
   "TRUE",
   "FALSE",
   "CHAR",
-  "INTEGER"
+  "INTEGER",
+  "STRING"
   };
 }
 

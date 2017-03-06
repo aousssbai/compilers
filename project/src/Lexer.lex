@@ -86,7 +86,8 @@ EndOfLineComment     = "#" {InputCharacter}* {LineTerminator}?
 
 /* character TODO: is \n a char?  */
 character = [:jletterdigit:] | \p{Punctuation}| " "
-char = "'" {character} "'"
+char = "'"{character}"'"
+string = "\"" {character}* "\""
 
 
 //%state CHAR
@@ -102,6 +103,8 @@ char = "'" {character} "'"
   "main"        { return symbol(sym.MAIN); }
   "let"         { return symbol(sym.LET);        }
   "print"       { return symbol(sym.PRINT);     }
+  "dict"        { return symbol(sym.DICT);}
+  "len"         { return symbol(sym.LEN);}
 
 // Types
   "bool"        { return symbol(sym.TYPE_BOOL);}
@@ -109,7 +112,9 @@ char = "'" {character} "'"
   "char"        { return symbol(sym.TYPE_CHAR);}
   "rat"         { return symbol(sym.TYPE_RAT);}
   "float"       { return symbol(sym.TYPE_FLOAT);}
-  "dict"        { return symbol(sym.TYPE_DICT);}
+  "top"         { return symbol(sym.TOP);}
+  "seq"         { return symbol(sym.SEQ);}
+
 
 
 
@@ -118,8 +123,11 @@ char = "'" {character} "'"
   {Integer}     { return symbol(sym.INTEGER,Integer.parseInt(yytext())); }
 
   {Whitespace}  { /* do nothing */               }
+  ":"           { return symbol(sym.COLON);      }
   ":="          { return symbol(sym.EQUAL);      }
   ";"           { return symbol(sym.SEMICOL);    }
+  ","           { return symbol(sym.COMMA);    }
+
   "+"           { return symbol(sym.PLUS);       }
   "-"           { return symbol(sym.MINUS);      }
   "*"           { return symbol(sym.MULT);       }
@@ -130,9 +138,18 @@ char = "'" {character} "'"
   "}"           { return symbol(sym.RBRA);       }
   "_"           { return symbol(sym.UNDERSCORE); }
   "."           { return symbol(sym.DOT);        }
+  "<"           { return symbol(sym.LCROCHET);   }
+  ">"           { return symbol(sym.RCROCHET);   }
+  "["           { return symbol(sym.LAGRA);   }
+  "]"           { return symbol(sym.RAGRA);   }
+
+
+
 
 
   {char}        { return symbol(sym.CHAR);       }
+  {string}        { return symbol(sym.STRING);       }
+
 //  \'            { string.setLength(0); yybegin(CHAR); }
 }
 
