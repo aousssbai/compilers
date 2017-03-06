@@ -156,6 +156,7 @@ number ::= INTEGER
 
 int_val ::= number
         | MINUS number;
+        //|len_property;
 
 rat_val ::= int_val DIV number;
 
