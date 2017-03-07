@@ -68,10 +68,10 @@ nonterminal type_dict, type_seq;
 
 //Types value
 terminal TRUE, FALSE, CHAR, INTEGER, STRING;
-nonterminal int_val, rat_val, float_val, dict_val, seq_val;
+nonterminal int_val, rat_val, float_val, dict_val, seq_val, int_number;
 
 //Dict/SEQ components
-nonterminal dict_obj,dict_content,seq_content, len_property;
+nonterminal dict_obj,dict_content,seq_content, len_property, index, slice;
 
 // Non terminal blocks
 nonterminal statements, statement, top_level;
@@ -158,12 +158,13 @@ int_val ::= number
         | MINUS number;
         //|len_property;
 
-   //    git remote add ucl jnahum@gitlab.cs.ucl.ac.uk:/cs/student/comp207p/comp207p_43
-
-
 rat_val ::= int_val DIV number;
 
 float_val ::= int_val DOT number;
+
+int_number ::= len_property
+            | int_val;
+//            TODO add result of int operations here (same for the others)
 
 // Types
 // TODO: to complete with string, dict...
@@ -175,18 +176,19 @@ all_types ::= TYPE_BOOL
             | type_seq
             | type_dict;
 
-// Types val
+// Types val TODO: replace _val with _number if needed
 all_types_val ::= TRUE
                 | FALSE
                 | CHAR
-                | int_val
                 | rat_val
                 | float_val
                 | dict_val
                 | seq_val
+                | int_number
+                | index
+                | slice
                 | STRING
-                | IDENTIFIER
-                | len_property;
+                | IDENTIFIER;
 
 // Dict
 type_dict ::= DICT LCROCHET all_types COMMA all_types RCROCHET
@@ -214,8 +216,13 @@ seq_content ::=  all_types_val
             | /* empty */  ;
 
 //len
-
 len_property ::= IDENTIFIER DOT LEN;
+//index
+index ::= IDENTIFIER LAGRA int_number RAGRA;
+//slice
+slice ::= IDENTIFIER LAGRA number COLON int_number RAGRA
+        | IDENTIFIER LAGRA COLON int_number RAGRA
+        | IDENTIFIER LAGRA number COLON RAGRA;
 
 // TODO: add len as int for operations
 // TODO: add a[index] for dictionnary and sequence
