@@ -2,14 +2,9 @@ Paragraph: 5
 Problem: we tried to wrapped char with ’ but it didn't parse correctly.
 Our solution: We used ' instead to wrap chars in our compiler.
 
-
 Paragraph: 7
 Problem: it is not clear whether we can have an underscore (for readability?) only in rat or also in float and int.
 Our solution: In many other languages, underscore is supported in all numerical types (like Java), so our compiler accepts this syntax.
-
-Paragraph: 7
-Problem: it is not clear whether we can have a negative denominator in rational.
-Our solution: We prefer to avoid having this situation: "-455/-52", so our compiler doesn't accept this syntax. Only numerators can be negative.
 
 Paragraph: 8
 Problem: in the example line 5 {1:1, 2:’c’, 7:3/5, {1:T}}, the last item {1:T} doesn't have a key (or a value)

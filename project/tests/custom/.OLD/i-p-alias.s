@@ -1,0 +1,1 @@
+alias seq<char> string;

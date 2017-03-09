@@ -55,12 +55,13 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, UNDERSCORE, DOT, LCROCHET, RCROCHET, COMMA, COLON, LAGRA, RAGRA;
+terminal IDENTIFIER, LET, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, UNDERSCORE, DOT, LCROCHET, RCROCHET, COMMA, COLON, DOUBLE_COLON, LAGRA, RAGRA, EXCLAM, AND, OR, IMPL, EQ, DIFF, EXPO, INFEQ, QUESTION;
 terminal LPAREN, RPAREN, RBRA, LBRA;
-terminal BADCHAR;
+terminal BADCHAR, LOOP, POOL, IF, THEN, ELSE, FI, BREAK;
 
 // Keywords
-terminal MAIN, PRINT, DICT,SEQ, TOP, LEN;
+terminal MAIN, PRINT, DICT,SEQ, TOP, LEN, IN, TDEF, FDEF, ALIAS, READ, RETURN;
+
 
 //Types Def
 terminal TYPE_BOOL,TYPE_CHAR,TYPE_INT, TYPE_FLOAT,TYPE_RAT;
@@ -68,21 +69,32 @@ nonterminal type_dict, type_seq;
 
 //Types value
 terminal TRUE, FALSE, CHAR, INTEGER, STRING;
-nonterminal int_val, rat_val, float_val, dict_val, seq_val, int_number;
+nonterminal int_val, rat_val, float_val, dict_val, seq_val ,bool_val, int_number, numeric_val;
+
+//Operations
+nonterminal numeric_ops, numeric_ops_plus, numeric_regrouped, bool_duo, seq_temp, seq_concat, bool_ops, bool_ops_plus;
 
 //Dict/SEQ components
-nonterminal dict_obj,dict_content,seq_content, len_property, index, slice;
+nonterminal dict_obj,dict_content,seq_content, len_property, in_property, index, slice;
 
 // Non terminal blocks
 nonterminal statements, statement, top_level;
 nonterminal let_bind, full_exp, simple_exp, operator;
 
+nonterminal number, all_types, all_types_val, identifiers;
 
-//Numerical helpers
-nonterminal number, all_types, all_types_val;
+//---------- 2.1 -------
+// Declarations
+nonterminal declaration, declaration_list, parameters_list;
+// Typedef - ALiax - func
+nonterminal type_definition, alias_definition, func_definition, func_call;
+
+//---------- 2.2 -------
+
+nonterminal exp,exp_content, comparison_operators_num_bool, comparison_operators_num, numeric_operators, boolean_operators, binary_operators;
 
 // TODO:Delete test
-nonterminal test;
+nonterminal test, var_assigment, read_var, print_var, return, loop, break,if_statement, var_init;
 
 
 
@@ -90,58 +102,58 @@ precedence left PLUS, MINUS;
 precedence left DIV, MULT;
 
 // TODO:Delete test
-test ::= all_types_val;
-//        | simple_exp SEMICOL
+test ::= statements;
 
 
-top_level ::= statements:ss {:
-                if(debug()) System.out.println((Node)ss);
-              :}
-            ;
+//top_level ::= statements:ss {:
+//                if(debug()) System.out.println((Node)ss);
+//              :}
+//            ;
+//
+//statements ::= statements:ss statement:s {:
+//                  Node n = (Node)ss;
+//                  n.addChild((Node)s);
+//                  RESULT = n;
+//               :}
+//             | /* empty */ {:
+//                  RESULT = new Node("Statements");
+//               :}
+//             ;
 
-statements ::= statements:ss statement:s {:
-                  Node n = (Node)ss;
-                  n.addChild((Node)s);
-                  RESULT = n;
-               :}
-             | /* empty */ {:
-                  RESULT = new Node("Statements");
-               :}
-             ;
+//statement ::= let_bind:s {:
+//                RESULT = (Node)s;
+//              :}
+//            | full_exp:s {:
+//                RESULT = (Node)s;
+//              :}
+//            ;
+//
+//full_exp ::= simple_exp:e SEMICOL {: RESULT = (Node)e; :};
+//
+//simple_exp ::= INTEGER:i    {: RESULT = new Node(i); :}
+//             | IDENTIFIER:i {: RESULT = new Node(i); :}
+////             | CHAR:i {: RESULT = new Node(i); :}
+//             | simple_exp:e1 operator:o simple_exp:e2 {:
+//                  Node n = (Node)o;
+//                  n.addChild((Node)e1);
+//                  n.addChild((Node)e2);
+//                  RESULT = n;
+//               :}
+//             | LPAREN simple_exp:e RPAREN {:
+//                 Node n = new Node("parens");
+//                 n.addChild(new Node("("));
+//                 n.addChild((Node)e);
+//                 n.addChild(new Node(")"));
+//                 RESULT = (Node)e;
+//               :}
+//             ;
+//
+//operator ::= PLUS  {: RESULT = new Node("+"); :}
+//           | MINUS {: RESULT = new Node("-"); :}
+//           | MULT  {: RESULT = new Node("*"); :}
+//           | DIV   {: RESULT = new Node("/"); :}
+//           ;
 
-statement ::= let_bind:s {:
-                RESULT = (Node)s;
-              :}
-            | full_exp:s {:
-                RESULT = (Node)s;
-              :}
-            ;
-
-full_exp ::= simple_exp:e SEMICOL {: RESULT = (Node)e; :};
-
-simple_exp ::= INTEGER:i    {: RESULT = new Node(i); :}
-             | IDENTIFIER:i {: RESULT = new Node(i); :}
-//             | CHAR:i {: RESULT = new Node(i); :}
-             | simple_exp:e1 operator:o simple_exp:e2 {:
-                  Node n = (Node)o;
-                  n.addChild((Node)e1);
-                  n.addChild((Node)e2);
-                  RESULT = n;
-               :}
-             | LPAREN simple_exp:e RPAREN {:
-                 Node n = new Node("parens");
-                 n.addChild(new Node("("));
-                 n.addChild((Node)e);
-                 n.addChild(new Node(")"));
-                 RESULT = (Node)e;
-               :}
-             ;
-
-operator ::= PLUS  {: RESULT = new Node("+"); :}
-           | MINUS {: RESULT = new Node("-"); :}
-           | MULT  {: RESULT = new Node("*"); :}
-           | DIV   {: RESULT = new Node("/"); :}
-           ;
 
 let_bind ::= LET IDENTIFIER:i EQUAL full_exp:e {:
                Node n = new Node("LET");
@@ -150,21 +162,68 @@ let_bind ::= LET IDENTIFIER:i EQUAL full_exp:e {:
                RESULT = n;
              :};
 
+bool_duo ::= FALSE
+           | TRUE;
+
+bool_ops ::=   EXCLAM bool_duo
+             |  bool_duo AND bool_ops_plus
+             |  bool_duo OR bool_ops_plus
+             |  bool_duo IMPL bool_ops_plus
+             |  bool_duo EQ bool_ops_plus
+             |  bool_duo DIFF bool_ops_plus;
+
+bool_ops_plus ::=  bool_duo
+                  |  bool_duo AND bool_val
+                  |  bool_duo OR bool_val
+                  |  bool_duo IMPL bool_val
+                  |  bool_duo EQ bool_val
+                  |  bool_duo DIFF bool_val;
+
+bool_val ::= bool_duo;
+           //| bool_ops;
+
 // Numbers values def
 number ::= INTEGER
         | number UNDERSCORE INTEGER;
 
 int_val ::= number
         | MINUS number;
-        //|len_property;
 
-rat_val ::= int_val DIV number;
+rat_val ::= int_val DIV int_val;
 
 float_val ::= int_val DOT number;
 
-int_number ::= len_property
+int_number ::=  len_property
             | int_val;
-//            TODO add result of int operations here (same for the others)
+
+numeric_regrouped ::= int_number
+            | rat_val
+            | float_val;
+
+numeric_ops_plus ::= numeric_regrouped
+            | numeric_regrouped PLUS numeric_ops_plus
+            | numeric_regrouped MINUS numeric_ops_plus
+            | numeric_regrouped MULT numeric_ops_plus
+            | numeric_regrouped DIV numeric_ops_plus
+            | numeric_regrouped EXPO numeric_ops_plus
+            | numeric_regrouped EQ numeric_ops_plus
+            | numeric_regrouped DIFF numeric_ops_plus
+            | numeric_regrouped LCROCHET numeric_ops_plus
+            | numeric_regrouped INFEQ numeric_ops_plus;
+
+numeric_ops ::= numeric_regrouped PLUS numeric_ops_plus
+            | numeric_regrouped MINUS numeric_ops_plus
+            | numeric_regrouped MULT numeric_ops_plus
+            | numeric_regrouped DIV numeric_ops_plus
+            | numeric_regrouped EXPO numeric_ops_plus
+            | numeric_regrouped EQ numeric_ops_plus
+            | numeric_regrouped DIFF numeric_ops_plus
+            | numeric_regrouped LCROCHET numeric_ops_plus
+            | numeric_regrouped INFEQ numeric_ops_plus;
+
+numeric_val ::= numeric_regrouped;
+            //| numeric_ops;
+
 
 // Types
 // TODO: to complete with string, dict...
@@ -174,21 +233,19 @@ all_types ::= TYPE_BOOL
             | TYPE_FLOAT
             | TYPE_RAT
             | type_seq
-            | type_dict;
+            | type_dict
+            | IDENTIFIER;
 
-// Types val TODO: replace _val with _number if needed
-all_types_val ::= TRUE
-                | FALSE
-                | CHAR
-                | rat_val
-                | float_val
+// TODO: delete?
+all_types_val ::= CHAR
+                | bool_val
+                | numeric_val
                 | dict_val
                 | seq_val
-                | int_number
                 | index
-                | slice
                 | STRING
-                | IDENTIFIER;
+                | identifiers;
+// Réccursion identifier
 
 // Dict
 type_dict ::= DICT LCROCHET all_types COMMA all_types RCROCHET
@@ -209,7 +266,13 @@ dict_obj ::= all_types_val COLON all_types_val;
 type_seq ::= SEQ LCROCHET all_types RCROCHET
            | SEQ LCROCHET TOP RCROCHET;
 
-seq_val ::= LAGRA seq_content RAGRA;
+seq_temp ::= LAGRA seq_content RAGRA
+//           | seq_val DOUBLE_COLON seq_val
+           | slice
+           ;
+
+seq_val ::= seq_temp
+         | seq_concat;
 
 seq_content ::=  all_types_val
             | all_types_val COMMA seq_content
@@ -217,12 +280,128 @@ seq_content ::=  all_types_val
 
 //len
 len_property ::= IDENTIFIER DOT LEN;
+
 //index
-index ::= IDENTIFIER LAGRA int_number RAGRA;
+index ::= IDENTIFIER LAGRA numeric_val RAGRA
+        | IDENTIFIER LAGRA IDENTIFIER RAGRA;
+//in
+//TODO: reparer in property
+in_property ::= all_types_val IN all_types_val;
+//            | all_types_val IN dict_val
+//            | all_types_val IN identifiers;
 //slice
 slice ::= IDENTIFIER LAGRA number COLON int_number RAGRA
         | IDENTIFIER LAGRA COLON int_number RAGRA
         | IDENTIFIER LAGRA number COLON RAGRA;
+//concatenation
+seq_concat ::= seq_temp DOUBLE_COLON seq_temp;
 
-// TODO: add len as int for operations
-// TODO: add a[index] for dictionnary and sequence
+identifiers ::= IDENTIFIER
+            | IDENTIFIER DOT identifiers;
+
+//------------- 2.1 Declarations --------------
+
+declaration ::= IDENTIFIER COLON all_types;
+declaration_list ::= declaration
+                  | declaration COMMA declaration_list;
+
+type_definition ::= TDEF IDENTIFIER LBRA declaration_list RBRA SEMICOL;
+
+alias_definition ::= ALIAS all_types all_types SEMICOL;
+
+//TODO: add to global statements
+func_definition ::= FDEF IDENTIFIER LPAREN declaration_list RPAREN LBRA statements RBRA SEMICOL
+                | FDEF IDENTIFIER LPAREN declaration_list RPAREN LBRA statements RBRA COLON all_types SEMICOL;
+
+parameters_list::= all_types_val
+                | func_call
+                | all_types_val COMMA parameters_list
+                | func_call COMMA parameters_list;
+
+func_call ::= QUESTION bool_val QUESTION IDENTIFIER LPAREN RPAREN
+           | QUESTION identifiers QUESTION IDENTIFIER LPAREN RPAREN
+           | QUESTION bool_val QUESTION IDENTIFIER LPAREN parameters_list RPAREN
+           | QUESTION identifiers QUESTION IDENTIFIER LPAREN parameters_list RPAREN;
+
+//------------ 2.2 ---------
+
+//TODO: add more expressions (concat + in property)
+exp::=   exp_content binary_operators exp_content
+       | exp_content binary_operators exp
+       | EXCLAM exp
+       | LPAREN exp RPAREN
+       | func_call
+//       | in_property
+       ;
+
+
+exp_content ::= numeric_regrouped
+            | bool_duo
+            | identifiers
+            | index;
+
+// Operators
+
+comparison_operators_num_bool ::= EQ
+                            | DIFF;
+
+comparison_operators_num ::= INFEQ
+                          | LCROCHET;
+
+numeric_operators ::= PLUS
+                    | MINUS
+                    | MULT
+                    | DIV
+                    | EXPO;
+
+boolean_operators ::= AND
+                    | OR
+                    | IMPL;
+
+binary_operators ::= comparison_operators_num_bool
+                    | comparison_operators_num
+                    | numeric_operators
+                    | boolean_operators;
+
+// Assigment, var init, assigment....
+
+var_assigment ::= identifiers EQUAL all_types_val SEMICOL
+                | identifiers EQUAL exp SEMICOL;
+
+var_init ::= identifiers COLON all_types EQUAL parameters_list SEMICOL;
+
+read_var ::= READ identifiers SEMICOL;
+
+print_var ::= PRINT all_types_val SEMICOL
+            | PRINT exp SEMICOL;
+
+return ::= RETURN all_types_val SEMICOL
+         | RETURN exp SEMICOL;
+
+//Flow handling
+
+loop ::= LOOP statements POOL;
+
+break ::= BREAK SEMICOL
+        | BREAK all_types_val SEMICOL;
+
+if_statement ::= IF LPAREN exp RPAREN THEN statements FI
+               | IF LPAREN exp RPAREN THEN statements ELSE statements FI;
+
+
+//Statements
+
+// TODO: create statements containing breaks to make sure beaks only are in loops
+
+statement ::= exp SEMICOL
+            | var_init
+            | var_assigment
+            | read_var
+            | print_var
+            | return
+            | loop
+            | break
+            | if_statement;
+
+statements ::= statements statement
+              | statement;

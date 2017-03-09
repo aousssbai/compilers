@@ -1,0 +1,1 @@
+?T?foo(?T?sum(10, c), bar)

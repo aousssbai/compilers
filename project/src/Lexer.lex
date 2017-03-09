@@ -70,7 +70,7 @@ import java_cup.runtime.*;
 %}
 
 LineTerminator = \r|\n|\r\n
-Whitespace = {LineTerminator}|" "|"\t"
+Whitespace = {LineTerminator} | " " | "\t"
 InputCharacter = [^LineTerminator]
 
 Letter = [a-zA-Z]
@@ -80,11 +80,12 @@ Identifier = {Letter}{IdChar}*
 Integer = (0|[1-9]{Digit}*)
 
  /* comments */
-Comment = {TraditionalComment} | {EndOfLineComment}
-TraditionalComment   = "/#" [^#] ~"#/" | "/#" "#"+ "/"
-EndOfLineComment     = "#" {InputCharacter}* {LineTerminator}?
+Comment = #.*(\n)? | \/#([^#]|#[^\/]|\n)*#\/
+//
+//TraditionalComment   = "/#" [^#] ~"#/" | "/#" "#"+ "/"
+//EndOfLineComment     = "#" [^#]* {LineTerminator}?
 
-/* character TODO: is \n a char?  */
+/* character  */
 character = [:jletterdigit:] | \p{Punctuation}| " "
 char = "'"{character}"'"
 string = "\"" {character}* "\""
@@ -96,6 +97,9 @@ string = "\"" {character}* "\""
 
 <YYINITIAL> {
 
+ {Comment}     { /* do nothing */               }
+ {Whitespace}  { /* do nothing */               }
+
  "T"           { return symbol(sym.TRUE);      }
  "F"           { return symbol(sym.FALSE);      }
 
@@ -105,6 +109,22 @@ string = "\"" {character}* "\""
   "print"       { return symbol(sym.PRINT);     }
   "dict"        { return symbol(sym.DICT);}
   "len"         { return symbol(sym.LEN);}
+  "return"         { return symbol(sym.RETURN);}
+
+  "in"          { return symbol(sym.IN);}
+  "tdef"        { return symbol(sym.TDEF);}
+  "fdef"        { return symbol(sym.FDEF);}
+  "alias"       { return symbol(sym.ALIAS);}
+  "read"       { return symbol(sym.READ);}
+  "loop"       { return symbol(sym.LOOP);}
+  "pool"       { return symbol(sym.POOL);}
+  "break"       { return symbol(sym.BREAK);}
+  "if"       { return symbol(sym.IF);}
+  "then"       { return symbol(sym.THEN);}
+  "else"       { return symbol(sym.ELSE);}
+  "fi"       { return symbol(sym.FI);}
+
+
 
 // Types
   "bool"        { return symbol(sym.TYPE_BOOL);}
@@ -117,21 +137,32 @@ string = "\"" {character}* "\""
 
 
 
-
 // Other
   {Identifier}  { return symbol(sym.IDENTIFIER, yytext());   }
   {Integer}     { return symbol(sym.INTEGER,Integer.parseInt(yytext())); }
 
-  {Whitespace}  { /* do nothing */               }
   ":"           { return symbol(sym.COLON);      }
+  "::"           { return symbol(sym.DOUBLE_COLON);      }
   ":="          { return symbol(sym.EQUAL);      }
   ";"           { return symbol(sym.SEMICOL);    }
   ","           { return symbol(sym.COMMA);    }
+  "!"           { return symbol(sym.EXCLAM);    }
+  "&&"          { return symbol(sym.AND);    }
+  "||"          { return symbol(sym.OR);    }
+  "=>"          { return symbol(sym.IMPL);    }
+  "="           { return symbol(sym.EQ);    }
+  "!="           { return symbol(sym.DIFF);    }
+  "<="           { return symbol(sym.INFEQ);        }
+  "?"           { return symbol(sym.QUESTION);    }
+
+
 
   "+"           { return symbol(sym.PLUS);       }
   "-"           { return symbol(sym.MINUS);      }
   "*"           { return symbol(sym.MULT);       }
   "/"           { return symbol(sym.DIV);        }
+  "^"           { return symbol(sym.EXPO);        }
+
   "("           { return symbol(sym.LPAREN);     }
   ")"           { return symbol(sym.RPAREN);     }
   "{"           { return symbol(sym.LBRA);       }
@@ -148,18 +179,10 @@ string = "\"" {character}* "\""
 
 
   {char}        { return symbol(sym.CHAR);       }
-  {string}        { return symbol(sym.STRING);       }
+  {string}      { return symbol(sym.STRING);     }
 
-//  \'            { string.setLength(0); yybegin(CHAR); }
+
 }
-
-//<CHAR> {
-//  \'                             { yybegin(YYINITIAL);
-//                                   return symbol(sym.CHAR,
-//                                   string.toString()); }
-//  {character}                    { string.append( yytext() ); }
-//  [^]                            { throw new Error("Character must be closed with a '. Cant be void:" + yytext()); }
-//}
 
 [^]  {
   System.out.println("file:" + (yyline+1) +
